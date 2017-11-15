@@ -12,12 +12,13 @@ install:
   - gem install jazzy
 
 script:
+  - cd AppLaunch
   - pod update
   - pod lib lint --allow-warnings
   - carthage update
-  - xcodebuild clean build -workspace AppLaunch/AppLaunch.xcworkspace -scheme AppLaunch CODE_SIGN_IDENTITY= CODE_SIGNING_REQUIRED=NO
+  - xcodebuild clean build -workspace AppLaunch.xcworkspace -scheme AppLaunch CODE_SIGN_IDENTITY= CODE_SIGNING_REQUIRED=NO
   # For Xcode 8, test with iOS 10.1
-  - xcodebuild test -workspace AppLaunch/AppLaunch.xcworkspace -destination 'platform=iOS Simulator,name=iPhone 6,OS=10.1' -enableCodeCoverage YES;
+  - xcodebuild test -workspace AppLaunch.xcworkspace -destination 'platform=iOS Simulator,name=iPhone 6,OS=10.1' -enableCodeCoverage YES;
   # When merging or pushing to the master branch, release a new version and publish the API documentation
   - if [ "${TRAVIS_PULL_REQUEST}" = "false" ] && [[ "${TRAVIS_BRANCH}" = "master" ]]; then
       bash scripts/release.sh;
