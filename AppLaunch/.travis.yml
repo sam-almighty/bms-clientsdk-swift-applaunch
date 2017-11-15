@@ -1,0 +1,25 @@
+language: objective-c
+
+matrix:
+  include:
+    - osx_image: xcode8.3
+
+before_install:
+  - rvm install 2.4.0
+
+install:
+  - gem install cocoapods
+  - gem install jazzy
+
+script:
+  - pod update
+  - pod lib lint --allow-warnings
+  - carthage update
+  - xcodebuild clean build -workspace AppLaunch.xcworkspace -scheme AppLaunch CODE_SIGN_IDENTITY= CODE_SIGNING_REQUIRED=NO
+  # For Xcode 8, test with iOS 10.1
+  - xcodebuild test -workspace AppLaunch.xcworkspace -destination 'platform=iOS Simulator,name=iPhone 6,OS=10.1' -enableCodeCoverage YES;
+  # When merging or pushing to the master branch, release a new version and publish the API documentation
+  - if [ "${TRAVIS_PULL_REQUEST}" = "false" ] && [[ "${TRAVIS_BRANCH}" = "master" ]]; then
+      bash scripts/release.sh;
+      bash scripts/publish-docs.sh;
+    fi
